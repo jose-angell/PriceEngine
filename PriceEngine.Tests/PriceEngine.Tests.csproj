@@ -18,4 +18,8 @@
     <Using Include="Xunit" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\PriceEngine.Api\PriceEngine.Api.csproj" />
+  </ItemGroup>
+
 </Project>
