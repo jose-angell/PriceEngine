@@ -1,3 +1,4 @@
 <Solution>
+  <Project Path="PriceEngine.Tests/PriceEngine.Tests.csproj" Id="50d9568e-b75b-4c2e-ad3c-da0dfa67a77e" />
   <Project Path="PriceEngine/PriceEngine.csproj" />
 </Solution>

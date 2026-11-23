@@ -1,0 +1,6 @@
+@PriceEngine_HostAddress = http://localhost:5187
+
+GET {{PriceEngine_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
