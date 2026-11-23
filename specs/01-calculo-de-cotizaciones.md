@@ -1,6 +1,6 @@
 # SPEC 01 — Dominio de cotizaciones y rename del proyecto
 
-> **Estado:** aprobado
+> **Estado:** implementado
 > **Depende de:** —
 > **Fecha:** 2026-11-23
 > **Objetivo:** Terminar el rename a `PriceEngine.Api` y establecer el dominio de cotizaciones (validación y cálculo con desglose de descuento, recargo por urgencia e impuesto) con tests unitarios.
@@ -124,24 +124,24 @@ public readonly record struct Percentage
 
 ## Criterios de aceptación
 
-- [ ] `PriceEngine.slnx` lista `PriceEngine.Api` y `PriceEngine.Tests`, y no lista `PriceEngine`.
-- [ ] No existe `PriceEngine.Api/PriceEngine.csproj` ni la carpeta `PriceEngine/`.
-- [ ] `PriceEngine.Tests` referencia a `PriceEngine.Api`.
-- [ ] `dotnet build PriceEngine.slnx` termina sin errores.
-- [ ] `dotnet test PriceEngine.Tests` pasa en verde.
-- [ ] `new Money(2.345m).Amount` es 2.35 y `new Money(-2.345m).Amount` es -2.35.
-- [ ] `new Money(10m).Apply(new Percentage(15))` es `Money` 1.50.
-- [ ] `new Percentage(101)` y `new Percentage(-1)` lanzan `ArgumentOutOfRangeException`.
-- [ ] Dos `Money` con el mismo monto son iguales (`==`).
-- [ ] `QuotationRequest` y `QuotationResult` no exponen `Money` ni `Percentage`.
-- [ ] `QuotationCalculator.Calculate` con el ejemplo de referencia devuelve `Subtotal` 300.00, `DiscountAmount` 30.00, `SurchargeAmount` 13.50, `TaxableBase` 283.50, `TaxAmount` 45.36, `Total` 328.86.
-- [ ] Sin descuento ni urgencia, `DiscountAmount` y `SurchargeAmount` son 0 y `SurchargePercentage` es 0.
-- [ ] `UnitPrice` 0 o negativo produce un error en `unitPrice`.
-- [ ] `Quantity` 0 o negativa produce un error en `quantity`.
-- [ ] `DiscountPercentage` -1 o 21 produce un error en `discountPercentage`; 0 y 20 son aceptados.
-- [ ] `ServiceName` vacío o solo espacios produce un error en `serviceName`.
-- [ ] Una solicitud con precio 0, cantidad 0 y descuento 25 produce los tres errores en una sola llamada a `Validate`.
-- [ ] `TaxableBase + TaxAmount == Total` y todos los montos tienen como máximo 2 decimales.
+- [x] `PriceEngine.slnx` lista `PriceEngine.Api` y `PriceEngine.Tests`, y no lista `PriceEngine`.
+- [x] No existe `PriceEngine.Api/PriceEngine.csproj` ni la carpeta `PriceEngine/`.
+- [x] `PriceEngine.Tests` referencia a `PriceEngine.Api`.
+- [x] `dotnet build PriceEngine.slnx` termina sin errores.
+- [x] `dotnet test PriceEngine.Tests` pasa en verde.
+- [x] `new Money(2.345m).Amount` es 2.35 y `new Money(-2.345m).Amount` es -2.35.
+- [x] `new Money(10m).Apply(new Percentage(15))` es `Money` 1.50.
+- [x] `new Percentage(101)` y `new Percentage(-1)` lanzan `ArgumentOutOfRangeException`.
+- [x] Dos `Money` con el mismo monto son iguales (`==`).
+- [x] `QuotationRequest` y `QuotationResult` no exponen `Money` ni `Percentage`.
+- [x] `QuotationCalculator.Calculate` con el ejemplo de referencia devuelve `Subtotal` 300.00, `DiscountAmount` 30.00, `SurchargeAmount` 13.50, `TaxableBase` 283.50, `TaxAmount` 45.36, `Total` 328.86.
+- [x] Sin descuento ni urgencia, `DiscountAmount` y `SurchargeAmount` son 0 y `SurchargePercentage` es 0.
+- [x] `UnitPrice` 0 o negativo produce un error en `unitPrice`.
+- [x] `Quantity` 0 o negativa produce un error en `quantity`.
+- [x] `DiscountPercentage` -1 o 21 produce un error en `discountPercentage`; 0 y 20 son aceptados.
+- [x] `ServiceName` vacío o solo espacios produce un error en `serviceName`.
+- [x] Una solicitud con precio 0, cantidad 0 y descuento 25 produce los tres errores en una sola llamada a `Validate`.
+- [x] `TaxableBase + TaxAmount == Total` y todos los montos tienen como máximo 2 decimales.
 
 ## Decisiones
 
