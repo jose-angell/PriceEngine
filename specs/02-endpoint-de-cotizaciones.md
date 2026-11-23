@@ -1,6 +1,6 @@
 # SPEC 02 — Endpoint POST /quotations
 
-> **Estado:** aprobado
+> **Estado:** implementado
 > **Depende de:** SPEC 01
 > **Fecha:** 2026-11-23
 > **Objetivo:** Exponer `POST /quotations`, con DTOs validados por DataAnnotations en `PriceEngine.Api/Quotations/`, que devuelve el desglose de la cotización o un 400 `ValidationProblem`, cubierto por tests de integración.
@@ -123,24 +123,24 @@ public static class QuotationEndpoints
 
 ## Criterios de aceptación
 
-- [ ] Existen `PriceEngine.Api/Quotations/CreateQuotationRequest.cs`, `QuotationResponse.cs` y `QuotationEndpoints.cs`, con namespace `PriceEngine.Api.Quotations`.
-- [ ] `CreateQuotationRequest` usa atributos de `System.ComponentModel.DataAnnotations` para todas sus reglas.
-- [ ] `Program.cs` llama `AddValidation()` y `MapQuotationEndpoints()`, y no contiene `weatherforecast` ni `WeatherForecast`.
-- [ ] `GET /weatherforecast` devuelve 404.
-- [ ] `POST /quotations` con el ejemplo de referencia devuelve 200 con `subtotal` 300.00, `discountAmount` 30.00, `surchargeAmount` 13.50, `taxableBase` 283.50, `taxAmount` 45.36, `total` 328.86.
-- [ ] Las propiedades del JSON de respuesta están en camelCase.
-- [ ] Un request sin `discountPercentage` ni `isUrgent` devuelve 200 con `discountPercentage` 0, `isUrgent` false y `surchargePercentage` 0.
-- [ ] `unitPrice` 0 devuelve 400 con error en `errors.unitPrice`.
-- [ ] `quantity` 0 devuelve 400 con error en `errors.quantity`.
-- [ ] `discountPercentage` 21 o -1 devuelve 400 con error en `errors.discountPercentage`; 0 y 20 devuelven 200.
-- [ ] `serviceName` `"   "` devuelve 400 con error en `errors.serviceName`.
-- [ ] Un body `{}` devuelve 400 con errores en `serviceName`, `unitPrice` y `quantity`.
-- [ ] Precio 0, cantidad 0 y descuento 25 devuelven 400 con los tres errores en una sola respuesta.
-- [ ] Las respuestas 400 de validación tienen `Content-Type` `application/problem+json`.
-- [ ] Un body que no es JSON válido devuelve 400.
-- [ ] `PriceEngine.http` contiene una petición `POST /quotations` válida y una inválida, y ninguna a `/weatherforecast`.
-- [ ] No hay cambios en `PriceEngine.Api/Domain/`.
-- [ ] `dotnet build PriceEngine.slnx` termina sin errores y `dotnet test PriceEngine.Tests` pasa en verde (incluidos los tests de SPEC 01).
+- [x] Existen `PriceEngine.Api/Quotations/CreateQuotationRequest.cs`, `QuotationResponse.cs` y `QuotationEndpoints.cs`, con namespace `PriceEngine.Api.Quotations`.
+- [x] `CreateQuotationRequest` usa atributos de `System.ComponentModel.DataAnnotations` para todas sus reglas.
+- [x] `Program.cs` llama `AddValidation()` y `MapQuotationEndpoints()`, y no contiene `weatherforecast` ni `WeatherForecast`.
+- [x] `GET /weatherforecast` devuelve 404.
+- [x] `POST /quotations` con el ejemplo de referencia devuelve 200 con `subtotal` 300.00, `discountAmount` 30.00, `surchargeAmount` 13.50, `taxableBase` 283.50, `taxAmount` 45.36, `total` 328.86.
+- [x] Las propiedades del JSON de respuesta están en camelCase.
+- [x] Un request sin `discountPercentage` ni `isUrgent` devuelve 200 con `discountPercentage` 0, `isUrgent` false y `surchargePercentage` 0.
+- [x] `unitPrice` 0 devuelve 400 con error en `errors.unitPrice`.
+- [x] `quantity` 0 devuelve 400 con error en `errors.quantity`.
+- [x] `discountPercentage` 21 o -1 devuelve 400 con error en `errors.discountPercentage`; 0 y 20 devuelven 200.
+- [x] `serviceName` `"   "` devuelve 400 con error en `errors.serviceName`.
+- [x] Un body `{}` devuelve 400 con errores en `serviceName`, `unitPrice` y `quantity`.
+- [x] Precio 0, cantidad 0 y descuento 25 devuelven 400 con los tres errores en una sola respuesta.
+- [x] Las respuestas 400 de validación tienen `Content-Type` `application/problem+json`.
+- [x] Un body que no es JSON válido devuelve 400.
+- [x] `PriceEngine.http` contiene una petición `POST /quotations` válida y una inválida, y ninguna a `/weatherforecast`.
+- [x] No hay cambios en `PriceEngine.Api/Domain/`.
+- [x] `dotnet build PriceEngine.slnx` termina sin errores y `dotnet test PriceEngine.Tests` pasa en verde (incluidos los tests de SPEC 01).
 
 ## Decisiones
 

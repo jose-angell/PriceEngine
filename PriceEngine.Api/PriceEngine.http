@@ -1,6 +1,26 @@
 @PriceEngine_HostAddress = http://localhost:5187
 
-GET {{PriceEngine_HostAddress}}/weatherforecast/
-Accept: application/json
+### Cotización válida (ejemplo de referencia) -> 200, total 328.86
+POST {{PriceEngine_HostAddress}}/quotations
+Content-Type: application/json
+
+{
+  "serviceName": "Consultoría",
+  "unitPrice": 100,
+  "quantity": 3,
+  "discountPercentage": 10,
+  "isUrgent": true
+}
+
+### Cotización inválida (precio 0, cantidad 0, descuento 25) -> 400 con tres errores
+POST {{PriceEngine_HostAddress}}/quotations
+Content-Type: application/json
+
+{
+  "serviceName": "Consultoría",
+  "unitPrice": 0,
+  "quantity": 0,
+  "discountPercentage": 25
+}
 
 ###
