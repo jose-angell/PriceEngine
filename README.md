@@ -36,13 +36,17 @@ Cada monto se redondea a 2 decimales (`MidpointRounding.AwayFromZero`) en cada p
 
 ### `POST /quotations`
 
-| Campo                | Tipo    | Requerido | Validación                    |
-|----------------------|---------|-----------|-------------------------------|
-| `serviceName`        | string  | Sí        | No vacío ni solo espacios     |
-| `unitPrice`          | decimal | Sí        | Mayor que 0                   |
-| `quantity`           | int     | Sí        | Entero mayor que 0            |
-| `discountPercentage` | int     | No (0)    | Entero entre 0 y 20           |
-| `isUrgent`           | bool    | No (false)| —                             |
+| Campo                | Tipo    | Requerido | Validación                                         |
+|----------------------|---------|-----------|----------------------------------------------------|
+| `serviceName`        | string  | Sí        | No vacío ni solo espacios                          |
+| `unitPrice`          | decimal | Sí        | Mayor que 0, máximo 1,000,000 y máximo 2 decimales |
+| `quantity`           | int     | Sí        | Entero entre 1 y 10,000                            |
+| `discountPercentage` | int     | No (0)    | Entero entre 0 y 20                                |
+| `isUrgent`           | bool    | No (false)| —                                                  |
+
+Los decimales de `unitPrice` se juzgan por valor: `10.500` es válido y `10.005` no. Un precio con más de 2 decimales, mayor que 1,000,000, o una `quantity` mayor que 10,000 devuelve 400 con un mensaje por regla en `errors`. Si un precio rompe dos reglas a la vez (p. ej. `1000000.005`), `errors.unitPrice` contiene ambos mensajes.
+
+> Cambio de contrato: las peticiones con `quantity` mayor que 10,000 que antes se aceptaban ahora devuelven 400.
 
 Petición:
 
