@@ -93,7 +93,7 @@ Mensajes de error. Son el mismo texto en `QuotationValidator` y en los atributos
 5. Añadir a `QuotationCalculatorTests` los casos límite:
    - Precio mínimo 0.01 × 1, con y sin urgencia.
    - Máximos: 1,000,000 × 10,000 con descuento 20 y urgencia, sin excepción.
-   - Al menos un caso donde descuento, recargo e IVA caen en punto medio (x.xx5).
+   - Al menos un caso donde descuento y recargo caen en punto medio (x.xx5). El IVA no puede caer en punto medio con 16%, porque 16 × centavos / 100 nunca termina en .5.
    - Comprobar que `AmountAfterDiscount + SurchargeAmount == TaxableBase` y `TaxableBase + TaxAmount == Total`.
 6. Añadir a `QuotationEndpointsTests`:
    - 400 para `unitPrice` 10.005, 1000000.01 y para `quantity` 10001, con el mensaje correcto.
@@ -113,7 +113,7 @@ Mensajes de error. Son el mismo texto en `QuotationValidator` y en los atributos
 - [ ] `POST /quotations` con `unitPrice` 1000000, `quantity` 10000, descuento 20 y urgente devuelve 200, no 500.
 - [ ] `POST /quotations` con `unitPrice` 10.500 devuelve 200.
 - [ ] `MoneyTests` cubre: 0.005 → 0.01, 0.004 → 0.00, -0.005 → -0.01, resta negativa, `Multiply` en el máximo y `Apply` con punto medio negativo.
-- [ ] `QuotationCalculatorTests` incluye un caso con punto medio en descuento, recargo e IVA, y en todos los casos nuevos el desglose cuadra con `Total`.
+- [ ] `QuotationCalculatorTests` incluye un caso con punto medio en descuento y recargo, y en todos los casos nuevos el desglose cuadra con `Total`.
 - [ ] Los mensajes de `CreateQuotationRequest` y de `QuotationValidator` son idénticos.
 - [ ] `Money` y `Percentage` no cambian.
 - [ ] La tabla de validación de `README.md` refleja las nuevas reglas.
