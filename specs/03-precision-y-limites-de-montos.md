@@ -1,6 +1,6 @@
 # SPEC 03 — Precisión y límites de montos
 
-> **Estado:** aprobado
+> **Estado:** implementado
 > **Depende de:** SPEC 01, SPEC 02
 > **Fecha:** 2026-11-25
 > **Objetivo:** Rechazar con 400 los `unitPrice` con más de 2 decimales y los valores que puedan desbordar el cálculo, y cubrir con tests los casos límite de precisión y redondeo.
@@ -93,7 +93,7 @@ Mensajes de error. Son el mismo texto en `QuotationValidator` y en los atributos
 5. Añadir a `QuotationCalculatorTests` los casos límite:
    - Precio mínimo 0.01 × 1, con y sin urgencia.
    - Máximos: 1,000,000 × 10,000 con descuento 20 y urgencia, sin excepción.
-   - Al menos un caso donde descuento, recargo e IVA caen en punto medio (x.xx5).
+   - Al menos un caso donde descuento y recargo caen en punto medio (x.xx5). El IVA no puede caer en punto medio con 16%, porque 16 × centavos / 100 nunca termina en .5.
    - Comprobar que `AmountAfterDiscount + SurchargeAmount == TaxableBase` y `TaxableBase + TaxAmount == Total`.
 6. Añadir a `QuotationEndpointsTests`:
    - 400 para `unitPrice` 10.005, 1000000.01 y para `quantity` 10001, con el mensaje correcto.
@@ -102,22 +102,22 @@ Mensajes de error. Son el mismo texto en `QuotationValidator` y en los atributos
 
 ## Criterios de aceptación
 
-- [ ] `QuotationRules` expone `MaxUnitPrice` = 1000000, `MaxQuantity` = 10000 y `MaxUnitPriceDecimalPlaces` = 2.
-- [ ] `QuotationValidator` devuelve error en `unitPrice` con el mensaje de decimales para 10.005 y 0.001.
-- [ ] `QuotationValidator` acepta `unitPrice` 0.01, 10.5, 10.500 y 1000000.
-- [ ] `QuotationValidator` devuelve error en `unitPrice` con el mensaje de tope para 1000000.01.
-- [ ] Para `unitPrice` 1000000.005, `errors["unitPrice"]` tiene exactamente dos mensajes.
-- [ ] `QuotationValidator` acepta `quantity` 10000 y rechaza 10001 y 0 con `Quantity must be an integer between 1 and 10000.`
-- [ ] `POST /quotations` con `unitPrice` 10.005 devuelve 400 con `UnitPrice must have at most 2 decimal places.` en `errors.unitPrice`.
-- [ ] `POST /quotations` con `unitPrice` 1000000.01 devuelve 400. Con `quantity` 10001 también devuelve 400.
-- [ ] `POST /quotations` con `unitPrice` 1000000, `quantity` 10000, descuento 20 y urgente devuelve 200, no 500.
-- [ ] `POST /quotations` con `unitPrice` 10.500 devuelve 200.
-- [ ] `MoneyTests` cubre: 0.005 → 0.01, 0.004 → 0.00, -0.005 → -0.01, resta negativa, `Multiply` en el máximo y `Apply` con punto medio negativo.
-- [ ] `QuotationCalculatorTests` incluye un caso con punto medio en descuento, recargo e IVA, y en todos los casos nuevos el desglose cuadra con `Total`.
-- [ ] Los mensajes de `CreateQuotationRequest` y de `QuotationValidator` son idénticos.
-- [ ] `Money` y `Percentage` no cambian.
-- [ ] La tabla de validación de `README.md` refleja las nuevas reglas.
-- [ ] `dotnet build PriceEngine.slnx` termina sin errores y `dotnet test PriceEngine.Tests` pasa en verde.
+- [x] `QuotationRules` expone `MaxUnitPrice` = 1000000, `MaxQuantity` = 10000 y `MaxUnitPriceDecimalPlaces` = 2.
+- [x] `QuotationValidator` devuelve error en `unitPrice` con el mensaje de decimales para 10.005 y 0.001.
+- [x] `QuotationValidator` acepta `unitPrice` 0.01, 10.5, 10.500 y 1000000.
+- [x] `QuotationValidator` devuelve error en `unitPrice` con el mensaje de tope para 1000000.01.
+- [x] Para `unitPrice` 1000000.005, `errors["unitPrice"]` tiene exactamente dos mensajes.
+- [x] `QuotationValidator` acepta `quantity` 10000 y rechaza 10001 y 0 con `Quantity must be an integer between 1 and 10000.`
+- [x] `POST /quotations` con `unitPrice` 10.005 devuelve 400 con `UnitPrice must have at most 2 decimal places.` en `errors.unitPrice`.
+- [x] `POST /quotations` con `unitPrice` 1000000.01 devuelve 400. Con `quantity` 10001 también devuelve 400.
+- [x] `POST /quotations` con `unitPrice` 1000000, `quantity` 10000, descuento 20 y urgente devuelve 200, no 500.
+- [x] `POST /quotations` con `unitPrice` 10.500 devuelve 200.
+- [x] `MoneyTests` cubre: 0.005 → 0.01, 0.004 → 0.00, -0.005 → -0.01, resta negativa, `Multiply` en el máximo y `Apply` con punto medio negativo.
+- [x] `QuotationCalculatorTests` incluye un caso con punto medio en descuento y recargo, y en todos los casos nuevos el desglose cuadra con `Total`.
+- [x] Los mensajes de `CreateQuotationRequest` y de `QuotationValidator` son idénticos.
+- [x] `Money` y `Percentage` no cambian.
+- [x] La tabla de validación de `README.md` refleja las nuevas reglas.
+- [x] `dotnet build PriceEngine.slnx` termina sin errores y `dotnet test PriceEngine.Tests` pasa en verde.
 
 ## Decisiones
 

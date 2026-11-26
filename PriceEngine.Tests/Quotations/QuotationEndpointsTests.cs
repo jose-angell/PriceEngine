@@ -103,6 +103,68 @@ public class QuotationEndpointsTests : IClassFixture<WebApplicationFactory<Progr
         Assert.Equal(["unitPrice"], ErrorKeys(body));
     }
 
+    private static string[] Messages(JsonElement body, string key) =>
+        body.GetProperty("errors").GetProperty(key).EnumerateArray().Select(e => e.GetString()!).ToArray();
+
+    [Fact]
+    public async Task UnitPriceWithMoreThanTwoDecimals_Returns400WithDecimalsMessage()
+    {
+        var (response, body) = await PostAsync("""{"serviceName":"Consulting","unitPrice":10.005,"quantity":1}""");
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.Equal(["unitPrice"], ErrorKeys(body));
+        Assert.Equal(["UnitPrice must have at most 2 decimal places."], Messages(body, "unitPrice"));
+    }
+
+    [Fact]
+    public async Task UnitPriceAboveMax_Returns400WithMaxMessage()
+    {
+        var (response, body) = await PostAsync("""{"serviceName":"Consulting","unitPrice":1000000.01,"quantity":1}""");
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.Equal(["UnitPrice must not exceed 1000000."], Messages(body, "unitPrice"));
+    }
+
+    [Fact]
+    public async Task UnitPriceAboveMaxWithTooManyDecimals_ReturnsBothMessages()
+    {
+        var (response, body) = await PostAsync("""{"serviceName":"Consulting","unitPrice":1000000.005,"quantity":1}""");
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.Equal(
+            ["UnitPrice must have at most 2 decimal places.", "UnitPrice must not exceed 1000000."],
+            Messages(body, "unitPrice").Order().ToArray());
+    }
+
+    [Fact]
+    public async Task QuantityAboveMax_Returns400WithRangeMessage()
+    {
+        var (response, body) = await PostAsync("""{"serviceName":"Consulting","unitPrice":100,"quantity":10001}""");
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.Equal(["quantity"], ErrorKeys(body));
+        Assert.Equal(["Quantity must be an integer between 1 and 10000."], Messages(body, "quantity"));
+    }
+
+    [Fact]
+    public async Task UnitPriceWithTrailingZeros_Returns200()
+    {
+        var (response, body) = await PostAsync("""{"serviceName":"Consulting","unitPrice":10.500,"quantity":1}""");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal(10.50m, body.GetProperty("subtotal").GetDecimal());
+    }
+
+    [Fact]
+    public async Task MaximumValues_Returns200()
+    {
+        var (response, body) = await PostAsync(
+            """{"serviceName":"Consulting","unitPrice":1000000,"quantity":10000,"discountPercentage":20,"isUrgent":true}""");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal(9_744_000_000.00m, body.GetProperty("total").GetDecimal());
+    }
+
     [Fact]
     public async Task QuantityZero_Returns400OnQuantity()
     {

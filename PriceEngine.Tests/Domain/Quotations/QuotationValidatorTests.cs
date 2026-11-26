@@ -48,14 +48,63 @@ public class QuotationValidatorTests
     }
 
     [Theory]
+    [InlineData("0.01")]
+    [InlineData("10.5")]
+    [InlineData("10.500")]
+    [InlineData("1000000")]
+    public void UnitPrice_ValidValues_AreAccepted(string price)
+    {
+        Assert.Empty(QuotationValidator.Validate(Valid(unitPrice: decimal.Parse(price))));
+    }
+
+    [Theory]
+    [InlineData("0.001")]
+    [InlineData("10.005")]
+    public void UnitPrice_MoreThanTwoDecimals_ReturnsDecimalsError(string price)
+    {
+        var errors = QuotationValidator.Validate(Valid(unitPrice: decimal.Parse(price)));
+
+        Assert.Single(errors);
+        Assert.Equal(["UnitPrice must have at most 2 decimal places."], errors["unitPrice"]);
+    }
+
+    [Fact]
+    public void UnitPrice_AboveMax_ReturnsMaxError()
+    {
+        var errors = QuotationValidator.Validate(Valid(unitPrice: 1000000.01m));
+
+        Assert.Single(errors);
+        Assert.Equal(["UnitPrice must not exceed 1000000."], errors["unitPrice"]);
+    }
+
+    [Fact]
+    public void UnitPrice_AboveMaxAndTooManyDecimals_ReturnsBothMessages()
+    {
+        var errors = QuotationValidator.Validate(Valid(unitPrice: 1000000.005m));
+
+        Assert.Equal(
+            ["UnitPrice must not exceed 1000000.", "UnitPrice must have at most 2 decimal places."],
+            errors["unitPrice"]);
+    }
+
+    [Theory]
     [InlineData(0)]
     [InlineData(-5)]
-    public void Quantity_ZeroOrNegative_ReturnsError(int quantity)
+    [InlineData(10001)]
+    public void Quantity_OutOfRange_ReturnsError(int quantity)
     {
         var errors = QuotationValidator.Validate(Valid(quantity: quantity));
 
         Assert.Single(errors);
-        Assert.True(errors.ContainsKey("quantity"));
+        Assert.Equal(["Quantity must be an integer between 1 and 10000."], errors["quantity"]);
+    }
+
+    [Theory]
+    [InlineData(1)]
+    [InlineData(10000)]
+    public void Quantity_Boundaries_AreAccepted(int quantity)
+    {
+        Assert.Empty(QuotationValidator.Validate(Valid(quantity: quantity)));
     }
 
     [Theory]

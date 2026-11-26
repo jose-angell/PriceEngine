@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using PriceEngine.Api.Domain.Quotations;
+using PriceEngine.Api.Quotations.Validation;
 
 namespace PriceEngine.Api.Quotations;
 
@@ -12,10 +13,13 @@ public sealed record CreateQuotationRequest
     [Range(0.0, (double)decimal.MaxValue, MinimumIsExclusive = true,
         ConvertValueInInvariantCulture = true, ParseLimitsInInvariantCulture = true,
         ErrorMessage = "UnitPrice must be greater than 0.")]
+    [MaxValue((double)QuotationRules.MaxUnitPrice, ErrorMessage = "UnitPrice must not exceed 1000000.")]
+    [MaxDecimalPlaces(QuotationRules.MaxUnitPriceDecimalPlaces,
+        ErrorMessage = "UnitPrice must have at most 2 decimal places.")]
     public decimal? UnitPrice { get; init; }
 
     [Required(ErrorMessage = "Quantity is required.")]
-    [Range(1, int.MaxValue, ErrorMessage = "Quantity must be an integer greater than 0.")]
+    [Range(1, QuotationRules.MaxQuantity, ErrorMessage = "Quantity must be an integer between 1 and 10000.")]
     public int? Quantity { get; init; }
 
     [Range(0, QuotationRules.MaxDiscountPercentage,

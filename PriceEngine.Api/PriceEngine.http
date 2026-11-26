@@ -23,4 +23,14 @@ Content-Type: application/json
   "discountPercentage": 25
 }
 
+### Precio con más de 2 decimales (10.005) -> 400, UnitPrice must have at most 2 decimal places.
+POST {{PriceEngine_HostAddress}}/quotations
+Content-Type: application/json
+
+{
+  "serviceName": "Consultoría",
+  "unitPrice": 10.005,
+  "quantity": 3
+}
+
 ###
