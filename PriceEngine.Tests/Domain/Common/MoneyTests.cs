@@ -1,4 +1,5 @@
 using PriceEngine.Api.Domain.Common;
+using PriceEngine.Api.Domain.Quotations;
 
 namespace PriceEngine.Tests.Domain.Common;
 
@@ -65,6 +66,45 @@ public class MoneyTests
     public void Apply_ZeroPercentage_ReturnsZero()
     {
         Assert.Equal(Money.Zero, new Money(123.45m).Apply(Percentage.Zero));
+    }
+
+    [Fact]
+    public void Constructor_SubCentMidpoint_RoundsUp()
+    {
+        Assert.Equal(0.01m, new Money(0.005m).Amount);
+    }
+
+    [Fact]
+    public void Constructor_BelowSubCentMidpoint_RoundsToZero()
+    {
+        Assert.Equal(0.00m, new Money(0.004m).Amount);
+    }
+
+    [Fact]
+    public void Constructor_NegativeSubCentMidpoint_RoundsAwayFromZero()
+    {
+        Assert.Equal(-0.01m, new Money(-0.005m).Amount);
+    }
+
+    [Fact]
+    public void Subtraction_NegativeResult_IsPreserved()
+    {
+        Assert.Equal(new Money(-1.25m), new Money(2.50m) - new Money(3.75m));
+    }
+
+    [Fact]
+    public void Multiply_AtMaximums_DoesNotOverflow()
+    {
+        var result = new Money(QuotationRules.MaxUnitPrice).Multiply(QuotationRules.MaxQuantity);
+
+        Assert.Equal(10_000_000_000.00m, result.Amount);
+    }
+
+    [Fact]
+    public void Apply_NegativeMidpoint_RoundsAwayFromZero()
+    {
+        // -0.50 * 5 / 100 = -0.025 -> -0.03
+        Assert.Equal(new Money(-0.03m), new Money(-0.50m).Apply(new Percentage(5)));
     }
 
     [Fact]
